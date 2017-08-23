@@ -1,3 +1,8 @@
+// npm 
+npm init
+
+// git
+git init
 git status
 git add .
 git comment -m ".."
@@ -5,3 +10,14 @@ git comment -am ".."
 
 git remote add origin https://github.com/davetapson/node-chat-app.git
 git push -u origin master
+
+// Heroku
+https://devcenter.heroku.com/articles/deploying-nodejs
+heroku login
+heroku create
+  https://afternoon-brook-45709.herokuapp.com/ | https://git.heroku.com/afternoon-brook-45709.git
+
+
+// troubleshoot missing dependencies on PROD (Heroku)
+rm -rf node_modules; npm install --production
+heroku local web (this will pick up missing dependencies in package.json file)
