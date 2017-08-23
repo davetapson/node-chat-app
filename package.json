@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server/server.js", // for Heroku to know what to start
+    "comment": "start: for Heroku to know what to start",
+    "start": "node server/server.js", 
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines":{
-    "node": "8.2.1" // for Heroku to know what version of node is running
+    "comment": "node: for Heroku to know what version of node is running",
+    "node": "8.2.1"
   },
   "author": "",
   "license": "ISC",
