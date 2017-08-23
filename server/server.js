@@ -43,11 +43,29 @@ io.on('connection', (socket)=>{ // regiseter event listener for new connections
 
   socket.on('createMessage', (newMessage)=>{ 
     console.log('newMessage', newMessage);
-    io.emit('newMessage', {                 // emit event to ALL connections
-      from: newMessage.from,
-      text: newMessage.text,
+
+    socket.emit('newMessage', { // greet new user
+      from: "Admin",
+      text: "Welcome to the Chat App",
       createdAt: new Date().getTime()
-    }); 
+    });
+
+    socket.broadcast.emit('newMessage', { // tell all that new user joint chat app
+      from: "Admin",
+      text: "New user has joined the Chat App",
+      createdAt: new Date().getTime()
+    });
+
+    // io.emit('newMessage', {                 // emit event to ALL connections
+    //   from: newMessage.from,
+    //   text: newMessage.text,
+    //   createdAt: new Date().getTime()
+    // }); 
+    socket.broadcast.emit('newMessage', {
+      from: newMessage,
+        text: newMessage.text,
+        createdAt: new Date().getTime()
+    })
   }
 )
 
