@@ -23,6 +23,29 @@ app.use(express.static(publicPath));
 io.on('connection', (socket)=>{ // regiseter event listener for new connections
   console.log('New user connected');
 
+  // event emitters
+  // socket.emit('newEmail', {
+  //   from: 'mike@example.com',
+  //   text: 'What is going on.',
+  //   createdAt: 123
+  // });
+
+  socket.emit('newMessage', {
+    from: 'dave',
+    text: 'Hey, whats up',
+    createdAt: 123
+  })
+
+  // event listeners
+  // socket.on('createEmail', (newEmail)=>{
+  //   console.log('createEmail', newEmail);
+  // });
+
+  socket.on('createMessage', (newMessage)=>{
+    console.log('newMessage', newMessage);
+  }
+)
+
   socket.on('disconnect', ()=>{ // register listener for disconnections
     console.log('Client disconnected');
   })
