@@ -2,17 +2,6 @@ var socket = io(); //initate request and keep connection open
 
 socket.on('connect', function () { // register event listener for new connections
   console.log('Connected to server');
-
-  // event emitters
-  // socket.emit('createEmail', {
-  //   to: 'jen@example.com',
-  //   text: 'Hey, this is Andrew'
-  // })
-
-  // socket.emit('createMessage', {
-  //   from: 'dave',
-  //   text: 'Hello'
-  // });
 });
 
 // event listeners
@@ -20,14 +9,10 @@ socket.on('disconnect', function () { // register event listener for disconnecti
   console.log('Disconnected from server')
 });
 
-// socket.on('newEmail', function(email){ // listener for new email
-//   console.log('New email', email);
-// });
-
 socket.on('newMessage', function (message) {
-  console.log('newMessage', message);
+  var formattedTime = moment(message.createdAt).format('HH:mm')
   var li = jQuery('<li></li>');
-  li.text(`${message.from}: ${message.text}`);
+  li.text(`${message.from} ${formattedTime}: ${message.text}`);
   jQuery('#messages').append(li);
 });
 
@@ -65,9 +50,10 @@ locationButton.on('click', function () {
 })
 
 socket.on('newLocationMessage', function (message) {
+  var formattedTime = moment(message.createdAt).format('HH:mm');
   var li = jQuery('<li></li>');
   var a = jQuery('<a target="_blank">Hey, here is where I am!</a>');
-  li.text(`${message.from}: `);
+  li.text(`${message.from} ${formattedTime}: `);
   a.attr('href', message.url);
 
   li.append(a);
