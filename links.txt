@@ -1,0 +1,7 @@
+git status
+git add .
+git comment -m ".."
+git comment -am ".."
+
+git remote add origin https://github.com/davetapson/node-chat-app.git
+git push -u origin master
