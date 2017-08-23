@@ -28,7 +28,7 @@ describe('generateLocationMessage', () => {
     var latitude = 1;
     var longitude = 2;
 
-    var url = `https://www.google.com/maps?${latitude},${longitude}`;
+    var url = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
     var locationMessage = generateLocationMessage(from, latitude, longitude);
 
