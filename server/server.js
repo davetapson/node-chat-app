@@ -19,54 +19,33 @@ const port = process.env.PORT || 3000;
 // use public 
 app.use(express.static(publicPath));
 
-const {generateMessage} = require('./utils/message')
+const { generateMessage } = require('./utils/message')
 
 
-io.on('connection', (socket)=>{ // regiseter event listener for new connections
+io.on('connection', (socket) => { // regiseter event listener for new connections
   console.log('New user connected');
 
-  // event emitters
-  // socket.emit('newEmail', {
-  //   from: 'mike@example.com',
-  //   text: 'What is going on.',
-  //   createdAt: 123
-  // });
+  // greet new user
+  socket.emit('newMessage', generateMessage("Admin", "Welcome to the Chat App"));
 
-  // socket.emit('newMessage', {               // emits to just the socket
-  //   from: 'dave',
-  //   text: 'Hey, whats up',
-  //   createdAt: 123
-  // })
+  // tell all users that new user joint chat app
+  socket.broadcast.emit('newMessage', generateMessage("Admin", "New user has joined the Chat App"));
 
-  // event listeners
-  // socket.on('createEmail', (newEmail)=>{
-  //   console.log('createEmail', newEmail);
-  // });
 
-  socket.on('createMessage', (newMessage)=>{ 
-    console.log('newMessage', newMessage);
+  socket.on('createMessage', (newMessage, callback) => {
+    console.log('newMessage', newMessage)
+    // emit event to ALL connections
+    io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
+    callback('This is from the server'); //sends event to client
+  })
 
-    // greet new user
-    socket.emit('newMessage', generateMessage("Admin", "Welcome to the Chat App"));
+  // send message from user to users
+  //socket.broadcast.emit('newMessage', generateMessage(newMessage, newMessage.text));
 
-    // tell all users that new user joint chat app
-    socket.broadcast.emit('newMessage', generateMessage("Admin", "New user has joined the Chat App"));
-
-    // io.emit('newMessage', {                 // emit event to ALL connections
-    //   from: newMessage.from,
-    //   text: newMessage.text,
-    //   createdAt: new Date().getTime()
-    // }); 
-    
-    // send message from user to users
-    socket.broadcast.emit('newMessage', generateMessage( newMessage, newMessage.text));
-  }
-)
-
-  socket.on('disconnect', ()=>{             // register listener for disconnections
+  socket.on('disconnect', () => {             // register listener for disconnections
     console.log('Client disconnected');
   })
-}) 
+})
 // routes
 // / 
 // app.get('/', (req, res) => {
@@ -74,6 +53,6 @@ io.on('connection', (socket)=>{ // regiseter event listener for new connections
 // });
 
 // start up express listener
-server.listen(port, () =>{
+server.listen(port, () => {
   console.log(`App listening on port: ${port}`);
 });
