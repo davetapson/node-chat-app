@@ -9,10 +9,10 @@ socket.on('connect', function(){ // register event listener for new connections
   //   text: 'Hey, this is Andrew'
   // })
 
-  socket.emit('createMessage', {
-    from: 'dave',
-    text: 'Hello'
-  });
+  // socket.emit('createMessage', {
+  //   from: 'dave',
+  //   text: 'Hello'
+  // });
 });
 
 // event listeners
