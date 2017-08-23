@@ -5,16 +5,17 @@
   "main": "index.js",
   "scripts": {
     "comment": "start: for Heroku to know what to start",
-    "start": "node server/server.js", 
+    "start": "node server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "engines":{
+  "engines": {
     "comment": "node: for Heroku to know what version of node is running",
     "node": "8.2.1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.15.4"
+    "express": "^4.15.4",
+    "socket.io": "^2.0.3"
   }
 }

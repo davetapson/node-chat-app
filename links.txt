@@ -18,9 +18,12 @@ heroku create
   https://afternoon-brook-45709.herokuapp.com/ | https://git.heroku.com/afternoon-brook-45709.git
 git push heroku master
 
-// troubleshoot missing dependencies on PROD (Heroku)
-rm -rf node_modules; npm install --production
-heroku local web (this will pick up missing dependencies in package.json file)
+// troubleshooting:
+  // logs
+  heroku logs
+  // missing dependencies on PROD (Heroku)
+  rm -rf node_modules; npm install --production
+  heroku local web (this will pick up missing dependencies in package.json file)
 
 // resources
 https://devcenter.heroku.com/articles/node-best-practices
