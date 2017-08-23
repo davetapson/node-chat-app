@@ -20,6 +20,6 @@ app.use(express.static(publicPath));
 // });
 
 // start up express listener
-app.listen(3000, () =>{
+app.listen(port, () =>{
   console.log(`App listening on port: ${port}`);
 });
