@@ -19,7 +19,8 @@ const port = process.env.PORT || 3000;
 // use public 
 app.use(express.static(publicPath));
 
-const { generateMessage } = require('./utils/message')
+const { generateMessage, generateLocationMessage } = require('./utils/message')
+
 
 
 io.on('connection', (socket) => { // regiseter event listener for new connections
@@ -39,8 +40,9 @@ io.on('connection', (socket) => { // regiseter event listener for new connection
     callback('This is from the server'); //sends event to client
   })
 
-  // send message from user to users
-  //socket.broadcast.emit('newMessage', generateMessage(newMessage, newMessage.text));
+  socket.on('createLocationMessage', (coords) => {
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+  })
 
   socket.on('disconnect', () => {             // register listener for disconnections
     console.log('Client disconnected');
