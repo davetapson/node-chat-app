@@ -6,7 +6,9 @@
   "scripts": {
     "comment": "start: for Heroku to know what to start",
     "start": "node server/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"    
+    "comment2": "below settings to configure mocha",
+    "test": "mocha server/**/*.test.js",
+    "test-watch": "nodemon --exec 'npm test'"
   },
   "engines": {
     "comment": "node: for Heroku to know what version of node is running",
@@ -17,5 +19,10 @@
   "dependencies": {
     "express": "^4.15.4",
     "socket.io": "^2.0.3"
+  },
+  "devDependencies": {
+    "expect": "^1.20.2",
+    "mocha": "^3.5.0",
+    "nodemon": "^1.11.0"
   }
 }

@@ -19,6 +19,8 @@ const port = process.env.PORT || 3000;
 // use public 
 app.use(express.static(publicPath));
 
+const {generateMessage} = require('./utils/message')
+
 
 io.on('connection', (socket)=>{ // regiseter event listener for new connections
   console.log('New user connected');
@@ -44,28 +46,20 @@ io.on('connection', (socket)=>{ // regiseter event listener for new connections
   socket.on('createMessage', (newMessage)=>{ 
     console.log('newMessage', newMessage);
 
-    socket.emit('newMessage', { // greet new user
-      from: "Admin",
-      text: "Welcome to the Chat App",
-      createdAt: new Date().getTime()
-    });
+    // greet new user
+    socket.emit('newMessage', generateMessage("Admin", "Welcome to the Chat App"));
 
-    socket.broadcast.emit('newMessage', { // tell all that new user joint chat app
-      from: "Admin",
-      text: "New user has joined the Chat App",
-      createdAt: new Date().getTime()
-    });
+    // tell all users that new user joint chat app
+    socket.broadcast.emit('newMessage', generateMessage("Admin", "New user has joined the Chat App"));
 
     // io.emit('newMessage', {                 // emit event to ALL connections
     //   from: newMessage.from,
     //   text: newMessage.text,
     //   createdAt: new Date().getTime()
     // }); 
-    socket.broadcast.emit('newMessage', {
-      from: newMessage,
-        text: newMessage.text,
-        createdAt: new Date().getTime()
-    })
+    
+    // send message from user to users
+    socket.broadcast.emit('newMessage', generateMessage( newMessage, newMessage.text));
   }
 )
 
