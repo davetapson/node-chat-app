@@ -1,6 +1,6 @@
 var socket = io(); //initate request and keep connection open
 
-function scrollToBottom(){
+function scrollToBottom() {
   // selectors
   var messages = jQuery('#messages');
   var newMessage = messages.children('li:last-child');
@@ -12,13 +12,23 @@ function scrollToBottom(){
   var newMessageHeight = newMessage.innerHeight();
   var lastMessageHeight = newMessage.prev().innerHeight();
 
-  if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight){
+  if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
     messages.scrollTop(scrollHeight);
   }
 }
 
 socket.on('connect', function () { // register event listener for new connections
-  console.log('Connected to server');
+  var params = jQuery.deparam(window.location.search);
+
+  socket.emit('join', params, function (err) {
+    if (err) {
+      alert(err);
+      window.location.href = '/';
+    } else {
+      console.log('No error');
+    }
+  })
+
 });
 
 // event listeners
@@ -47,7 +57,7 @@ socket.on('newLocationMessage', function (message) {
   var html = Mustache.render(template, {
     url: message.url,
     from: message.from,
-    createdAt: formattedTime 
+    createdAt: formattedTime
   })
 
   jQuery('#messages').append(html);

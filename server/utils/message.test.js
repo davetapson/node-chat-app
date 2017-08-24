@@ -2,7 +2,7 @@ const expect = require('expect');
 
 var { generateMessage, generateLocationMessage } = require('./message');
 
-describe('generateMessage', () => {
+describe('message.generateMessage', () => {
   it('should generate a message consistent with inputs', () => {
 
     var msgFrom = 'Dave';
@@ -21,7 +21,7 @@ describe('generateMessage', () => {
   })
 })
 
-describe('generateLocationMessage', () => {
+describe('message.generateLocationMessage', () => {
   it('should generate correct location message', () => {
 
     var from = 'Dave';
