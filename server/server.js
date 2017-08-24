@@ -5,7 +5,7 @@ const socketIO = require('socket.io')                   // socket.io
 
 const { generateMessage, generateLocationMessage } = require('./utils/message')
 const { isRealString } = require('./utils/validation.js');
-const {Users} = require('./utils/users');
+const { Users } = require('./utils/users');
 
 const publicPath = path.join(__dirname, '../public');   // get path for html files
 const port = process.env.PORT || 3000;                  // for Heroku - use Heroku environment port value or 3000
@@ -18,7 +18,7 @@ app.use(express.static(publicPath));                    // use public
 
 io.on('connection', (socket) => { // regiseter event listener for new connections
   console.log('New user connected');
-  
+
   // join listener
   socket.on('join', (params, callback) => {
     if (!isRealString(params.name) || !isRealString(params.room)) {
@@ -29,7 +29,7 @@ io.on('connection', (socket) => { // regiseter event listener for new connection
     // socket.leave(params.room);
     users.removeUser(socket.id);
     users.addUser(socket.id, params.name, params.room); // add user to list
-    
+
     io.to(params.room).emit('updateUserList', users.getUserList(params.room));
 
     // io.emit - send to everyone
@@ -48,18 +48,26 @@ io.on('connection', (socket) => { // regiseter event listener for new connection
   });
 
   socket.on('createMessage', (newMessage, callback) => {
-    // emit event to ALL connections
-    io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
+    var user = users.getUser(socket.id);
+
+    if (user && isRealString(newMessage.text)) {
+      io.to(user.room).emit('newMessage', generateMessage(user.name, newMessage.text));
+    }
+
     callback(); //sends event to client
   })
 
   socket.on('createLocationMessage', (coords) => {
-    io.emit('newLocationMessage', generateLocationMessage(users.getUser(socket.id).name, coords.latitude, coords.longitude));
+    var user = users.getUser(socket.id);
+    
+    if (user) {
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+    }
   })
 
   socket.on('disconnect', () => {             // register listener for disconnections
     var user = users.removeUser(socket.id);
-    if (user){
+    if (user) {
       io.to(user.room).emit('updateUserList', users.getUserList(user.room));
       io.to(user.room).emit('newMessage', generateMessage('ChatApp', `${user.name} has left.`));
     }

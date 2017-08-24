@@ -25,7 +25,10 @@ socket.on('connect', function () { // register event listener for new connection
       alert(err);
       window.location.href = '/';
     } else {
-      console.log('No error');
+      // console.log('No error');
+      // var loginName = jQuery(`<div><h4>   Logged in as: Bob</h4></div>`);
+      // console.log(loginName);
+      // jQuery('#users').append(loginName);
     }
   })
 
@@ -33,10 +36,11 @@ socket.on('connect', function () { // register event listener for new connection
 
 // event listeners
 socket.on('disconnect', function () { // register event listener for disconnections
-  console.log('Disconnected from server')
+  // console.log('Disconnected from server')
 });
 
 socket.on('updateUserList', function(users){
+
   var ul = jQuery('<ul></ul>');
 
   users.forEach(function(user){
@@ -81,8 +85,8 @@ jQuery('#message-form').on('submit', function (e) {
   var params = jQuery.deparam(window.location.search);
 
   socket.emit('createMessage', {
-    from: params.name,
-    text: messageTextbox.val()
+     from: params.name,
+     text: messageTextbox.val()
   }, function () {
     messageTextbox.val('');
   })
