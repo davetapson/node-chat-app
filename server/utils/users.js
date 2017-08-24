@@ -24,6 +24,7 @@ class Users {
     var user = this.getUser(id);
     if(user){
       this.users = this.users.filter(user => user.id !== id);
+      //or
       // var indexof = this.users.indexOf(user);
       // this.users.slice(indexof, 1);
     }    

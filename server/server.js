@@ -1,41 +1,36 @@
-const path = require('path'); // concatenates path
-const http = require('http');
-
-// express - web framework
-const express = require('express');
-const app = express();
-
-// socket.io
-const socketIO = require('socket.io')
-var server = http.createServer(app); // express uses http server, so can just pass in app
-var io = socketIO(server);           // set up socket
-
-// get path for html files
-const publicPath = path.join(__dirname, '../public');
-
-// for Heroku - use Heroku environment port value or 3000
-const port = process.env.PORT || 3000;
-
-// use public 
-app.use(express.static(publicPath));
+const path = require('path');       // concatenates path
+const http = require('http');       // native http server
+const express = require('express'); // express - web framework
+const socketIO = require('socket.io')                   // socket.io
 
 const { generateMessage, generateLocationMessage } = require('./utils/message')
 const { isRealString } = require('./utils/validation.js');
+const {Users} = require('./utils/users');
 
+const publicPath = path.join(__dirname, '../public');   // get path for html files
+const port = process.env.PORT || 3000;                  // for Heroku - use Heroku environment port value or 3000
+const app = express();
+var server = http.createServer(app);                    // express uses http server, so can just pass in app
+var io = socketIO(server);                              // set up socket
+var users = new Users();
+
+app.use(express.static(publicPath));                    // use public 
 
 io.on('connection', (socket) => { // regiseter event listener for new connections
   console.log('New user connected');
-
-
-
+  
   // join listener
   socket.on('join', (params, callback) => {
     if (!isRealString(params.name) || !isRealString(params.room)) {
-      callback('Name and Room name are required.');
+      return callback('Name and Room name are required.');
     }
 
     socket.join(params.room);
     // socket.leave(params.room);
+    users.removeUser(socket.id);
+    users.addUser(socket.id, params.name, params.room); // add user to list
+    
+    io.to(params.room).emit('updateUserList', users.getUserList(params.room));
 
     // io.emit - send to everyone
     // socket.broadcast - send to everyone except sender
@@ -44,7 +39,7 @@ io.on('connection', (socket) => { // regiseter event listener for new connection
     // socket.broadcast.to('room name').emit - send to all in room except sender
 
     // greet new user
-    socket.emit('newMessage', generateMessage("ChatApp", `Welcome to the Chat App ${params.name}`));
+    socket.emit('newMessage', generateMessage(params.room, `Welcome ${params.name}`));
 
     // tell all room users that new user joint chat app
     socket.broadcast.to(params.room).emit('newMessage', generateMessage("ChatApp", `${params.name} has joined.`));
@@ -53,25 +48,24 @@ io.on('connection', (socket) => { // regiseter event listener for new connection
   });
 
   socket.on('createMessage', (newMessage, callback) => {
-    console.log('newMessage', newMessage)
     // emit event to ALL connections
     io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
     callback(); //sends event to client
   })
 
   socket.on('createLocationMessage', (coords) => {
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+    io.emit('newLocationMessage', generateLocationMessage(users.getUser(socket.id).name, coords.latitude, coords.longitude));
   })
 
   socket.on('disconnect', () => {             // register listener for disconnections
+    var user = users.removeUser(socket.id);
+    if (user){
+      io.to(user.room).emit('updateUserList', users.getUserList(user.room));
+      io.to(user.room).emit('newMessage', generateMessage('ChatApp', `${user.name} has left.`));
+    }
     console.log('Client disconnected');
-  })
+  });
 })
-// routes
-// / 
-// app.get('/', (req, res) => {
-//   res.send('Hello World');
-// });
 
 // start up express listener
 server.listen(port, () => {
